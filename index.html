@@ -1,0 +1,2435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مطارات الرياض — نظام تصاريح المطار v3.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --navy: #0a2540;
+    --navy-light: #14365e;
+    --navy-soft: #1a4170;
+    --gold: #c9a85c;
+    --gold-soft: #e0c789;
+    --gold-dark: #9b7e3e;
+    --bg: #f6f4ee;
+    --surface: #ffffff;
+    --surface-alt: #faf8f3;
+    --border: #e6e1d3;
+    --border-strong: #c8c0a8;
+    --text: #1a2332;
+    --text-soft: #5a6478;
+    --text-muted: #8a8f9c;
+    --success: #2d7d4f;
+    --success-bg: #e3f1e8;
+    --warning: #b8651b;
+    --warning-bg: #fbecd6;
+    --danger: #b3261e;
+    --danger-bg: #fbe5e3;
+    --info: #1d4b8a;
+    --info-bg: #e0ebf7;
+    --purple: #6c3aa3;
+    --purple-bg: #ede5f5;
+    --shadow-sm: 0 1px 2px rgba(10, 37, 64, 0.06);
+    --shadow-md: 0 4px 14px rgba(10, 37, 64, 0.08);
+    --shadow-lg: 0 12px 32px rgba(10, 37, 64, 0.14);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Noto Kufi Arabic', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(201, 168, 92, 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(10, 37, 64, 0.05) 0%, transparent 50%);
+  }
+
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ===== LOGIN ===== */
+  .login-screen {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .login-screen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(201, 168, 92, 0.18) 0%, transparent 35%),
+      radial-gradient(circle at 80% 70%, rgba(201, 168, 92, 0.12) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .login-card {
+    background: var(--surface);
+    width: 100%;
+    max-width: 440px;
+    border-radius: 16px;
+    padding: 44px 36px 36px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 1;
+  }
+  .login-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  .login-logo {
+    width: 64px; height: 64px;
+    background: var(--navy);
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    box-shadow: 0 8px 24px rgba(10,37,64,0.3);
+  }
+  .login-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 4px;
+  }
+  .login-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+  .login-version {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 168, 92, 0.18);
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 13px;
+    transition: all .15s;
+    border: 1.5px solid transparent;
+  }
+  .btn-primary { background: var(--navy); color: white; }
+  .btn-primary:hover { background: var(--navy-soft); }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: var(--gold-soft); }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { filter: brightness(1.08); }
+  .btn-warning { background: var(--warning); color: white; }
+  .btn-warning:hover { filter: brightness(1.08); }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { filter: brightness(1.08); }
+  .btn-outline { background: transparent; color: var(--navy); border-color: var(--border-strong); }
+  .btn-outline:hover { background: var(--surface-alt); border-color: var(--navy); }
+  .btn-ghost { background: transparent; color: var(--text-soft); }
+  .btn-ghost:hover { background: var(--surface-alt); color: var(--text); }
+  .btn-block { width: 100%; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-lg { padding: 14px 22px; font-size: 14px; }
+
+  .login-hint {
+    margin-top: 24px;
+    padding: 14px;
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+  .login-hint strong { color: var(--navy); }
+  .login-hint .creds {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+    margin-top: 8px;
+    font-family: monospace;
+    direction: ltr;
+    text-align: right;
+  }
+
+  .login-error {
+    background: var(--danger-bg);
+    color: var(--danger);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    margin-bottom: 14px;
+    border-right: 3px solid var(--danger);
+  }
+
+  /* ===== APP SHELL ===== */
+  .app-shell { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
+
+  .topbar {
+    background: var(--navy);
+    color: white;
+    padding: 12px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topbar-logo {
+    width: 38px; height: 38px;
+    background: var(--gold);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    color: var(--navy);
+  }
+  .topbar-title { font-size: 14px; font-weight: 700; }
+  .topbar-subtitle { font-size: 10px; color: var(--gold-soft); margin-top: 1px; }
+
+  .topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .user-info { text-align: left; line-height: 1.3; }
+  .user-name { font-size: 13px; font-weight: 600; }
+  .user-role { font-size: 10px; color: var(--gold-soft); }
+  .user-avatar {
+    width: 36px; height: 36px;
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    min-height: calc(100vh - 62px);
+  }
+
+  .sidebar {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    padding: 18px 12px;
+  }
+  .sidebar-section {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 10px 12px 6px;
+  }
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text-soft);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all .12s;
+    margin-bottom: 2px;
+    position: relative;
+  }
+  .sidebar-link:hover { background: var(--surface-alt); color: var(--navy); }
+  .sidebar-link.active {
+    background: var(--navy);
+    color: white;
+  }
+  .sidebar-link.active .badge { background: var(--gold); color: var(--navy); }
+  .sidebar-link .icon { font-size: 16px; line-height: 1; }
+  .sidebar-link .badge {
+    margin-right: auto;
+    background: var(--surface-alt);
+    color: var(--navy);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .main { padding: 24px 28px; overflow-x: auto; }
+
+  .page-header {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .page-title { font-size: 22px; font-weight: 700; color: var(--navy); }
+  .page-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ===== STATS ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent, var(--navy));
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  .stat-value { font-size: 26px; font-weight: 700; color: var(--navy); line-height: 1; }
+  .stat-meta { font-size: 11px; color: var(--text-soft); margin-top: 6px; }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all .12s;
+  }
+  .tab:hover { color: var(--navy); }
+  .tab.active { color: var(--navy); border-bottom-color: var(--gold); }
+  .tab .badge {
+    background: var(--surface-alt);
+    color: var(--text-soft);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    min-width: 20px;
+    text-align: center;
+  }
+  .tab.active .badge { background: var(--gold); color: var(--navy); }
+
+  /* ===== TABLE / LIST ===== */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-alt);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: var(--surface-alt);
+    text-align: right;
+    padding: 12px 14px;
+    font-weight: 700;
+    color: var(--text-soft);
+    font-size: 11px;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface-alt); }
+
+  .permit-id {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: var(--navy);
+    direction: ltr;
+    display: inline-block;
+  }
+
+  /* ===== STATUS PILLS ===== */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .pill-yellow { background: var(--warning-bg); color: var(--warning); }
+  .pill-green  { background: var(--success-bg); color: var(--success); }
+  .pill-red    { background: var(--danger-bg); color: var(--danger); }
+  .pill-purple { background: var(--purple-bg); color: var(--purple); }
+  .pill-orange { background: var(--warning-bg); color: var(--warning); }
+  .pill-blue   { background: var(--info-bg); color: var(--info); }
+  .pill-gray   { background: var(--surface-alt); color: var(--text-muted); }
+
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .empty {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+  }
+  .empty .empty-icon {
+    font-size: 42px;
+    margin-bottom: 10px;
+    opacity: 0.4;
+  }
+  .empty .empty-title { font-weight: 600; color: var(--text-soft); margin-bottom: 4px; }
+
+  /* ===== MODAL ===== */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 37, 64, 0.55);
+    backdrop-filter: blur(4px);
+    display: grid;
+    place-items: center;
+    z-index: 100;
+    padding: 20px;
+    animation: fadeIn .15s;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: var(--surface);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+  }
+  .modal-lg { max-width: 800px; }
+  .modal-header {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .modal-close {
+    color: var(--text-muted);
+    font-size: 22px;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+  }
+  .modal-close:hover { background: var(--surface-alt); color: var(--navy); }
+  .modal-body { padding: 22px; }
+  .modal-footer {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    background: var(--surface-alt);
+  }
+
+  /* ===== TOAST ===== */
+  .toasts {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    background: white;
+    border: 1px solid var(--border);
+    border-right: 4px solid var(--accent, var(--navy));
+    border-radius: var(--radius-sm);
+    padding: 12px 18px;
+    box-shadow: var(--shadow-lg);
+    min-width: 280px;
+    font-size: 13px;
+    font-weight: 500;
+    animation: slideIn .2s;
+  }
+  .toast-success { --accent: var(--success); }
+  .toast-error { --accent: var(--danger); }
+  .toast-warning { --accent: var(--warning); }
+  .toast-info { --accent: var(--info); }
+  @keyframes slideIn { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* ===== ROUNDS ===== */
+  .round-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .round-header {
+    padding: 12px 16px;
+    background: var(--surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .round-title { font-weight: 700; color: var(--navy); font-size: 13px; }
+  .round-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .round-body { padding: 14px 16px; }
+  .approval-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .approval-step:last-child { border-bottom: none; }
+  .approval-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .approval-info { flex: 1; min-width: 0; }
+  .approval-action { font-weight: 600; font-size: 13px; }
+  .approval-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .approval-comment {
+    margin-top: 6px;
+    padding: 8px 10px;
+    background: var(--surface-alt);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--text-soft);
+    border-right: 2px solid var(--border-strong);
+  }
+
+  /* ===== KEY-VALUE GRID ===== */
+  .kv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .kv {
+    background: var(--surface-alt);
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border-right: 3px solid var(--gold);
+  }
+  .kv-label { font-size: 10px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.3px; }
+  .kv-value { font-size: 13px; color: var(--text); font-weight: 600; margin-top: 2px; }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 18px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--gold);
+    display: inline-block;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-row input, .filter-row select {
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-size: 12px;
+    min-width: 160px;
+  }
+  .filter-row input:focus, .filter-row select:focus {
+    outline: none;
+    border-color: var(--gold);
+  }
+
+  /* ===== QR CODE ===== */
+  .qr-container {
+    background: white;
+    padding: 18px;
+    border-radius: var(--radius);
+    border: 2px solid var(--gold);
+    display: inline-block;
+    margin: 0 auto;
+  }
+
+  /* WhatsApp Log */
+  .wa-message {
+    background: #d4f5d8;
+    padding: 10px 14px;
+    border-radius: 10px 10px 10px 4px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    border-right: 3px solid #2d7d4f;
+    max-width: 540px;
+  }
+  .wa-meta { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Print */
+  @media print {
+    body * { visibility: hidden; }
+    #print-area, #print-area * { visibility: visible; }
+    #print-area {
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      padding: 30px;
+    }
+    .no-print { display: none !important; }
+  }
+
+  .print-permit {
+    background: white;
+    padding: 32px;
+    position: relative;
+    border: 2px solid var(--navy);
+    border-radius: var(--radius);
+  }
+  .print-permit::before {
+    content: 'مطارات الرياض';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 90px;
+    font-weight: 800;
+    color: rgba(10, 37, 64, 0.06);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+    padding-bottom: 14px;
+    margin-bottom: 18px;
+  }
+
+  .stage-progress {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .stage-pip {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+  }
+  .stage-pip.done { background: var(--success); }
+  .stage-pip.current { background: var(--gold); }
+
+  /* Misc */
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .grow { flex: 1; }
+  .text-muted { color: var(--text-muted); }
+  .small { font-size: 11px; }
+  .text-center { text-align: center; }
+  .mt-2 { margin-top: 12px; }
+  .mb-2 { margin-bottom: 12px; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 16px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <div id="modal-root"></div>
+  <div class="toasts" id="toasts"></div>
+
+<script>
+/* ============================================================
+   مطارات الرياض — Riyadh Airports — نظام تصاريح المطار v3.1
+   Single-file SPA. Storage: localStorage key 'rac_airport_permits_v3_1'.
+   ============================================================ */
+
+const STORAGE_KEY = 'rac_airport_permits_v3_1';
+const PHONE = '+966505551436';
+
+// ---------- ICONS (inline SVG strings, kept tiny) ----------
+const I = {
+  plane: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>'
+};
+
+// ---------- DEFAULT USERS ----------
+const DEFAULT_USERS = [
+  { id: 'u-admin', username: 'admin', password: 'admin123', fullName: 'مدير النظام', role: 'admin', active: true, createdAt: Date.now() },
+  { id: 'u-op1', username: 'operator1', password: 'op123', fullName: 'سعد العتيبي - موظف تصاريح', role: 'operator', active: true, createdAt: Date.now() },
+  { id: 'u-user1', username: 'user1', password: 'user123', fullName: 'فهد المطيري', role: 'user', active: true, createdAt: Date.now() },
+  { id: 'u-cust', username: 'customs', password: 'cust123', fullName: 'مندوب الجمارك - أحمد القحطاني', role: 'customs', active: true, createdAt: Date.now() },
+  { id: 'u-sec', username: 'security', password: 'sec123', fullName: 'مندوب الأمن العام - عبدالله الحربي', role: 'security', active: true, createdAt: Date.now() },
+  { id: 'u-gaca', username: 'gaca', password: 'gaca123', fullName: 'مندوب هيئة الطيران - خالد الزهراني', role: 'gaca', active: true, createdAt: Date.now() }
+];
+
+const ROLE_LABELS = {
+  admin: 'مدير النظام',
+  operator: 'موظف تصاريح',
+  user: 'مستخدم',
+  customs: 'مندوب الجمارك',
+  security: 'مندوب الأمن العام',
+  gaca: 'مندوب هيئة الطيران المدني'
+};
+
+const STATUS_LABELS = {
+  pending_approval_1: { txt: 'بانتظار الجمارك', cls: 'pill-yellow' },
+  pending_approval_2: { txt: 'بانتظار الأمن العام', cls: 'pill-yellow' },
+  pending_approval_3: { txt: 'بانتظار هيئة الطيران', cls: 'pill-yellow' },
+  pending_payment: { txt: 'بانتظار الدفع', cls: 'pill-purple' },
+  returned: { txt: 'معاد للتصحيح', cls: 'pill-orange' },
+  active: { txt: 'ساري', cls: 'pill-green' },
+  expiring: { txt: 'قارب على الانتهاء', cls: 'pill-orange' },
+  expired: { txt: 'منتهي', cls: 'pill-red' },
+  rejected: { txt: 'مرفوض', cls: 'pill-red' },
+  cancelled: { txt: 'ملغى', cls: 'pill-red' }
+};
+
+// ---------- STATE ----------
+let state = {
+  users: [],
+  permits: [],
+  whatsappLog: [],
+  session: null,
+  view: 'home',
+  filter: { search: '', status: '' }
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      state.users = Array.isArray(data.users) && data.users.length ? data.users : [...DEFAULT_USERS];
+      state.permits = Array.isArray(data.permits) ? data.permits : [];
+      state.whatsappLog = Array.isArray(data.whatsappLog) ? data.whatsappLog : [];
+      state.session = data.session || null;
+    } else {
+      state.users = [...DEFAULT_USERS];
+      seedSamplePermits();
+    }
+  } catch (e) {
+    console.warn('Failed to load state, using defaults', e);
+    state.users = [...DEFAULT_USERS];
+    state.permits = [];
+    state.whatsappLog = [];
+  }
+  // Always ensure default users exist (so test creds work even after partial migration)
+  for (const def of DEFAULT_USERS) {
+    if (!state.users.find(u => u.username === def.username)) state.users.push(def);
+  }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      users: state.users,
+      permits: state.permits,
+      whatsappLog: state.whatsappLog,
+      session: state.session
+    }));
+  } catch (e) {
+    console.warn('Failed to save', e);
+  }
+}
+
+function seedSamplePermits() {
+  // small sample to make department histories visible immediately
+  const now = Date.now();
+  const day = 86400000;
+
+  // permit 1: fully approved & active (customs + security + gaca all approved)
+  state.permits.push({
+    id: 'PRM-10001',
+    applicantName: 'فهد المطيري',
+    applicantId: '1234567890',
+    applicantPhone: '+966501112233',
+    company: 'شركة الإمداد العربية',
+    materialType: 'معدات صيانة',
+    materialDescription: 'مفكات، مفاتيح إنجليزية، أدوات قياس',
+    quantity: '1 صندوق',
+    direction: 'entry',
+    airport: 'مطار الملك خالد الدولي',
+    duration: 7,
+    status: 'active',
+    currentStage: null,
+    rounds: [{
+      roundNumber: 1, startedAt: now - 5*day, endedAt: now - 2*day, status: 'completed', resubmittedFromRound: null,
+      approvals: [
+        { stage: 1, stageName: 'الجمارك', action: 'approved', by: 'u-cust', byName: 'مندوب الجمارك - أحمد القحطاني', role: 'customs', comment: '', at: now - 4*day },
+        { stage: 2, stageName: 'الأمن العام', action: 'approved', by: 'u-sec', byName: 'مندوب الأمن العام - عبدالله الحربي', role: 'security', comment: '', at: now - 3*day },
+        { stage: 3, stageName: 'هيئة الطيران', action: 'approved', by: 'u-gaca', byName: 'مندوب هيئة الطيران - خالد الزهراني', role: 'gaca', comment: '', at: now - 2.5*day }
+      ]
+    }],
+    paymentAmount: 350,
+    paymentDate: now - 2*day,
+    paymentConfirmedBy: 'u-op1',
+    expiryDate: now + 5*day,
+    createdBy: 'u-user1',
+    createdByName: 'فهد المطيري',
+    createdAt: now - 5*day
+  });
+
+  // permit 2: at security stage now (customs already approved)
+  state.permits.push({
+    id: 'PRM-10002',
+    applicantName: 'فهد المطيري',
+    applicantId: '1234567890',
+    applicantPhone: '+966501112233',
+    company: 'شركة الإمداد العربية',
+    materialType: 'مواد كهربائية',
+    materialDescription: 'كابلات، لوحات تحكم',
+    quantity: '20 وحدة',
+    direction: 'entry',
+    airport: 'مطار الملك خالد الدولي',
+    duration: 14,
+    status: 'pending_approval_2',
+    currentStage: 2,
+    rounds: [{
+      roundNumber: 1, startedAt: now - 2*day, endedAt: null, status: 'in_progress', resubmittedFromRound: null,
+      approvals: [
+        { stage: 1, stageName: 'الجمارك', action: 'approved', by: 'u-cust', byName: 'مندوب الجمارك - أحمد القحطاني', role: 'customs', comment: 'الوثائق سليمة', at: now - 1.5*day }
+      ]
+    }],
+    createdBy: 'u-user1', createdByName: 'فهد المطيري', createdAt: now - 2*day
+  });
+
+  // permit 3: at customs (waiting)
+  state.permits.push({
+    id: 'PRM-10003',
+    applicantName: 'فهد المطيري',
+    applicantId: '1234567890',
+    applicantPhone: '+966501112233',
+    company: 'شركة الإمداد العربية',
+    materialType: 'قطع غيار',
+    materialDescription: 'قطع غيار طائرات صغيرة',
+    quantity: '5 قطع',
+    direction: 'exit',
+    airport: 'مطار الملك خالد الدولي',
+    duration: 3,
+    status: 'pending_approval_1',
+    currentStage: 1,
+    rounds: [{
+      roundNumber: 1, startedAt: now - 6*3600*1000, endedAt: null, status: 'in_progress', resubmittedFromRound: null,
+      approvals: []
+    }],
+    createdBy: 'u-user1', createdByName: 'فهد المطيري', createdAt: now - 6*3600*1000
+  });
+
+  saveState();
+}
+
+// ---------- AUTH ----------
+function login(username, password) {
+  const u = state.users.find(u => u.username === username && u.password === password && u.active);
+  if (!u) return { ok: false, error: 'بيانات الدخول غير صحيحة' };
+  state.session = { userId: u.id, at: Date.now() };
+  saveState();
+  return { ok: true };
+}
+function logout() { state.session = null; state.view = 'home'; saveState(); render(); }
+function currentUser() {
+  return state.session ? state.users.find(u => u.id === state.session.userId) : null;
+}
+
+// ---------- PERMISSIONS (per v3.1 spec) ----------
+function canApprove(user, permit) {
+  if (!user || !permit) return false;
+  if (permit.status === 'pending_approval_1' && user.role === 'customs') return true;
+  if (permit.status === 'pending_approval_2' && user.role === 'security') return true;
+  if (permit.status === 'pending_approval_3' && user.role === 'gaca') return true;
+  return false;
+}
+function canReturn(user, permit) {
+  return canApprove(user, permit); // same gating as approve, per v3.1
+}
+function canReject(user, permit) {
+  if (!user || !permit) return false;
+  if (user.role !== 'admin') return false; // ★ v3.1: admin only
+  return ['pending_approval_1','pending_approval_2','pending_approval_3','pending_payment','returned'].includes(permit.status);
+}
+function canCancel(user, permit) {
+  if (!user || !permit) return false;
+  if (user.role !== 'admin') return false;
+  return ['pending_approval_1','pending_approval_2','pending_approval_3','pending_payment','returned'].includes(permit.status);
+}
+function canConfirmPayment(user, permit) {
+  return user && user.role === 'operator' && permit && permit.status === 'pending_payment';
+}
+function canResubmit(user, permit) {
+  return user && permit && permit.status === 'returned' && permit.createdBy === user.id;
+}
+
+// ---------- VISIBILITY HELPERS ----------
+function getDeptForRole(role) {
+  if (role === 'customs') return { stage: 1, statusKey: 'pending_approval_1', label: 'الجمارك' };
+  if (role === 'security') return { stage: 2, statusKey: 'pending_approval_2', label: 'الأمن العام' };
+  if (role === 'gaca') return { stage: 3, statusKey: 'pending_approval_3', label: 'هيئة الطيران المدني' };
+  return null;
+}
+function permitsInMyStage(user) {
+  const dept = getDeptForRole(user.role);
+  if (!dept) return [];
+  return state.permits.filter(p => p.status === dept.statusKey);
+}
+function myApprovedPermits(user) {
+  if (!user) return [];
+  return state.permits.filter(p =>
+    Array.isArray(p.rounds) && p.rounds.some(r =>
+      Array.isArray(r.approvals) && r.approvals.some(a => a.by === user.id && a.action === 'approved')
+    )
+  );
+}
+function myReturnedPermits(user) {
+  if (!user) return [];
+  return state.permits.filter(p =>
+    Array.isArray(p.rounds) && p.rounds.some(r =>
+      Array.isArray(r.approvals) && r.approvals.some(a => a.by === user.id && a.action === 'returned')
+    )
+  );
+}
+function findUserApprovalOn(permit, userId, action) {
+  if (!permit || !permit.rounds) return null;
+  for (let i = permit.rounds.length - 1; i >= 0; i--) {
+    const r = permit.rounds[i];
+    if (!r.approvals) continue;
+    for (let j = r.approvals.length - 1; j >= 0; j--) {
+      const a = r.approvals[j];
+      if (a.by === userId && (!action || a.action === action)) return { approval: a, roundNumber: r.roundNumber };
+    }
+  }
+  return null;
+}
+
+// ---------- ACTIONS ----------
+function nextPermitId() {
+  let max = 10000;
+  for (const p of state.permits) {
+    const n = parseInt((p.id || '').replace('PRM-', ''), 10);
+    if (!isNaN(n) && n > max) max = n;
+  }
+  return 'PRM-' + (max + 1);
+}
+
+function ensureCurrentRound(permit) {
+  if (!Array.isArray(permit.rounds)) permit.rounds = [];
+  if (!permit.rounds.length) {
+    permit.rounds.push({
+      roundNumber: 1, startedAt: Date.now(), endedAt: null,
+      status: 'in_progress', resubmittedFromRound: null, approvals: []
+    });
+  }
+  const last = permit.rounds[permit.rounds.length - 1];
+  if (!Array.isArray(last.approvals)) last.approvals = [];
+  return last;
+}
+
+function createPermit(formData, byUser) {
+  const id = nextPermitId();
+  const now = Date.now();
+  const permit = {
+    id,
+    applicantName: formData.applicantName,
+    applicantId: formData.applicantId,
+    applicantPhone: formData.applicantPhone,
+    company: formData.company,
+    materialType: formData.materialType,
+    materialDescription: formData.materialDescription,
+    quantity: formData.quantity,
+    direction: formData.direction,
+    airport: formData.airport,
+    duration: parseInt(formData.duration, 10) || 7,
+    status: 'pending_approval_1',
+    currentStage: 1,
+    rounds: [{
+      roundNumber: 1, startedAt: now, endedAt: null,
+      status: 'in_progress', resubmittedFromRound: null, approvals: []
+    }],
+    createdBy: byUser.id,
+    createdByName: byUser.fullName,
+    createdAt: now
+  };
+  state.permits.unshift(permit);
+  saveState();
+  return permit;
+}
+
+function approvePermit(permitId, comment) {
+  try {
+    const user = currentUser();
+    const permit = state.permits.find(p => p.id === permitId);
+    if (!permit) return toast('error', 'الطلب غير موجود');
+    if (!canApprove(user, permit)) return toast('error', 'لا تملك صلاحية الموافقة على هذا الطلب');
+
+    const round = ensureCurrentRound(permit);
+    const dept = getDeptForRole(user.role);
+    round.approvals.push({
+      stage: dept.stage,
+      stageName: dept.label,
+      action: 'approved',
+      by: user.id,
+      byName: user.fullName,
+      role: user.role,
+      comment: comment || '',
+      at: Date.now()
+    });
+
+    // advance stage
+    if (permit.status === 'pending_approval_1') {
+      permit.status = 'pending_approval_2';
+      permit.currentStage = 2;
+    } else if (permit.status === 'pending_approval_2') {
+      permit.status = 'pending_approval_3';
+      permit.currentStage = 3;
+    } else if (permit.status === 'pending_approval_3') {
+      permit.status = 'pending_payment';
+      permit.currentStage = null;
+      // generate WhatsApp payment link msg
+      logWhatsApp({
+        permitId: permit.id,
+        type: 'payment_link',
+        message: `مرحباً ${permit.applicantName}،\nطلب التصريح ${permit.id} اكتمل بالموافقات الثلاث.\nالرجاء إتمام الدفع عبر الرابط:\nhttps://pay.rac.sa/${permit.id}\nالمبلغ: 350 ر.س`
+      });
+    }
+    saveState();
+    closeModal();
+    toast('success', 'تمت الموافقة بنجاح');
+    render();
+  } catch (e) {
+    console.error('approvePermit failed:', e);
+    toast('error', 'حدث خطأ أثناء الموافقة');
+  }
+}
+
+function returnPermit(permitId, comment) {
+  try {
+    const user = currentUser();
+    const permit = state.permits.find(p => p.id === permitId);
+    if (!permit) return toast('error', 'الطلب غير موجود');
+    if (!canReturn(user, permit)) return toast('error', 'لا تملك صلاحية إعادة هذا الطلب');
+    if (!comment || comment.trim().length < 5) return toast('error', 'سبب الإعادة إجباري (5 أحرف على الأقل)');
+
+    const round = ensureCurrentRound(permit);
+    const dept = getDeptForRole(user.role);
+    const now = Date.now();
+    round.approvals.push({
+      stage: dept.stage,
+      stageName: dept.label,
+      action: 'returned',
+      by: user.id,
+      byName: user.fullName,
+      role: user.role,
+      comment: comment.trim(),
+      at: now
+    });
+    round.status = 'returned';
+    round.endedAt = now;
+
+    permit.status = 'returned';
+    permit.currentStage = null;
+    permit.lastReturnComment = comment.trim();
+    permit.lastReturnBy = user.id;
+    permit.lastReturnAt = now;
+
+    saveState();
+    closeModal();
+    toast('warning', 'تمت إعادة الطلب للتصحيح');
+    render();
+  } catch (e) {
+    console.error('returnPermit failed:', e);
+    toast('error', 'حدث خطأ أثناء الإعادة');
+  }
+}
+
+function rejectPermit(permitId, comment) {
+  try {
+    const user = currentUser();
+    const permit = state.permits.find(p => p.id === permitId);
+    if (!permit) return toast('error', 'الطلب غير موجود');
+    if (!canReject(user, permit)) return toast('error', 'الرفض صلاحية للمدير حصراً');
+    if (!comment || comment.trim().length < 5) return toast('error', 'سبب الرفض إجباري (5 أحرف على الأقل)');
+
+    const round = ensureCurrentRound(permit);
+    const now = Date.now();
+    round.approvals.push({
+      stage: permit.currentStage || 0,
+      stageName: 'إدارة',
+      action: 'rejected',
+      by: user.id,
+      byName: user.fullName,
+      role: 'admin',
+      comment: comment.trim(),
+      at: now
+    });
+    round.status = 'rejected';
+    round.endedAt = now;
+    permit.status = 'rejected';
+    permit.rejectedAt = now;
+    permit.rejectedBy = user.id;
+    permit.rejectedByName = user.fullName;
+    permit.rejectionReason = comment.trim();
+
+    logWhatsApp({
+      permitId: permit.id, type: 'rejection_notice',
+      message: `إشعار: تم رفض طلب التصريح ${permit.id} من قِبَل الإدارة.\nالسبب: ${comment.trim()}`
+    });
+
+    saveState();
+    closeModal();
+    toast('error', 'تم رفض الطلب نهائياً');
+    render();
+  } catch (e) {
+    console.error('rejectPermit failed:', e);
+    toast('error', 'حدث خطأ أثناء الرفض');
+  }
+}
+
+function cancelPermit(permitId, reason) {
+  try {
+    const user = currentUser();
+    const permit = state.permits.find(p => p.id === permitId);
+    if (!permit) return toast('error', 'الطلب غير موجود');
+    if (!canCancel(user, permit)) return toast('error', 'الإلغاء الإداري صلاحية للمدير فقط');
+    if (!reason || reason.trim().length < 5) return toast('error', 'سبب الإلغاء إجباري (5 أحرف على الأقل)');
+
+    const round = ensureCurrentRound(permit);
+    const now = Date.now();
+    round.approvals.push({
+      stage: permit.currentStage || 0,
+      stageName: 'إدارة',
+      action: 'cancelled',
+      by: user.id,
+      byName: user.fullName,
+      role: 'admin',
+      comment: reason.trim(),
+      at: now
+    });
+    round.status = 'cancelled';
+    round.endedAt = now;
+    permit.previousStatus = permit.status;
+    permit.status = 'cancelled';
+    permit.cancelledAt = now;
+    permit.cancelledBy = user.id;
+    permit.cancelReason = reason.trim();
+
+    logWhatsApp({
+      permitId: permit.id, type: 'cancellation_notice',
+      message: `إشعار: تم إلغاء طلب التصريح ${permit.id} إدارياً.\nالسبب: ${reason.trim()}`
+    });
+
+    saveState();
+    closeModal();
+    toast('warning', 'تم إلغاء الطلب إدارياً');
+    render();
+  } catch (e) {
+    console.error('cancelPermit failed:', e);
+    toast('error', 'حدث خطأ أثناء الإلغاء');
+  }
+}
+
+function resubmitPermit(permitId, updates) {
+  try {
+    const user = currentUser();
+    const permit = state.permits.find(p => p.id === permitId);
+    if (!permit) return toast('error', 'الطلب غير موجود');
+    if (!canResubmit(user, permit)) return toast('error', 'لا يمكنك إعادة تقديم هذا الطلب');
+
+    // apply updates
+    Object.assign(permit, updates);
+    const prevRoundNum = (permit.rounds[permit.rounds.length - 1] || {}).roundNumber || 1;
+    permit.rounds.push({
+      roundNumber: prevRoundNum + 1,
+      startedAt: Date.now(),
+      endedAt: null,
+      status: 'in_progress',
+      resubmittedFromRound: prevRoundNum,
+      approvals: []
+    });
+    permit.status = 'pending_approval_1';
+    permit.currentStage = 1;
+    permit.lastResubmittedAt = Date.now();
+
+    saveState();
+    closeModal();
+    toast('success', 'تم تعديل الطلب وإعادة تقديمه');
+    render();
+  } catch (e) {
+    console.error('resubmitPermit failed:', e);
+    toast('error', 'حدث خطأ أثناء إعادة التقديم');
+  }
+}
+
+function confirmPayment(permitId) {
+  try {
+    const user = currentUser();
+    const permit = state.permits.find(p => p.id === permitId);
+    if (!permit) return toast('error', 'الطلب غير موجود');
+    if (!canConfirmPayment(user, permit)) return toast('error', 'لا تملك صلاحية تأكيد الدفع');
+
+    const now = Date.now();
+    permit.status = 'active';
+    permit.paymentAmount = 350;
+    permit.paymentDate = now;
+    permit.paymentConfirmedBy = user.id;
+    permit.expiryDate = now + permit.duration * 86400000;
+
+    const round = ensureCurrentRound(permit);
+    round.endedAt = now;
+    round.status = 'completed';
+
+    logWhatsApp({
+      permitId: permit.id, type: 'qr_image',
+      message: `[صورة QR] تصريح ${permit.id}\n${permit.applicantName} | ${permit.materialType}\n${permit.airport}\nصالح حتى: ${formatDate(permit.expiryDate)}`
+    });
+    logWhatsApp({
+      permitId: permit.id, type: 'finance_receipt',
+      message: `إشعار للإدارة المالية: تم استلام دفعة بقيمة 350 ر.س لتصريح ${permit.id}`
+    });
+
+    saveState();
+    closeModal();
+    toast('success', 'تم تأكيد الدفع وإصدار التصريح');
+    render();
+  } catch (e) {
+    console.error('confirmPayment failed:', e);
+    toast('error', 'حدث خطأ أثناء تأكيد الدفع');
+  }
+}
+
+function logWhatsApp({ permitId, type, message }) {
+  state.whatsappLog.unshift({
+    id: 'wa-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+    permitId, type, target: PHONE, message, at: Date.now()
+  });
+}
+
+function createUser(data) {
+  if (state.users.find(u => u.username === data.username)) { toast('error', 'اسم المستخدم موجود'); return false; }
+  state.users.push({
+    id: 'u-' + Date.now(),
+    username: data.username,
+    password: data.password,
+    fullName: data.fullName,
+    role: data.role,
+    active: true,
+    createdAt: Date.now()
+  });
+  saveState(); render(); toast('success', 'تم إنشاء المستخدم');
+  return true;
+}
+function toggleUserActive(userId) {
+  const u = state.users.find(x => x.id === userId);
+  if (!u) return;
+  if (u.id === 'u-admin') return toast('error', 'لا يمكن تعطيل المدير الرئيسي');
+  u.active = !u.active;
+  saveState(); render();
+}
+
+// ---------- UTILS ----------
+function formatDate(ts) {
+  if (!ts) return '-';
+  const d = new Date(ts);
+  return d.toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+function formatDateTime(ts) {
+  if (!ts) return '-';
+  const d = new Date(ts);
+  return d.toLocaleString('ar-SA', { dateStyle: 'short', timeStyle: 'short' });
+}
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function getStatusInfo(permit) {
+  const s = permit.status;
+  if (s === 'active' && permit.expiryDate) {
+    const days = Math.ceil((permit.expiryDate - Date.now()) / 86400000);
+    if (days < 0) return STATUS_LABELS.expired;
+    if (days <= 7) return STATUS_LABELS.expiring;
+  }
+  return STATUS_LABELS[s] || { txt: s, cls: 'pill-gray' };
+}
+function statusPill(permit) {
+  const info = getStatusInfo(permit);
+  return `<span class="pill ${info.cls}">${escapeHtml(info.txt)}</span>`;
+}
+
+// ---------- TOAST ----------
+function toast(type, msg, duration) {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .2s'; }, duration || 3500);
+  setTimeout(() => el.remove(), (duration || 3500) + 300);
+}
+
+// ---------- MODAL ----------
+function showModal(html) {
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `<div class="modal-backdrop" onclick="if(event.target===this)closeModal()">${html}</div>`;
+}
+function closeModal() {
+  document.getElementById('modal-root').innerHTML = '';
+}
+
+// ---------- RENDER ----------
+function render() {
+  const u = currentUser();
+  if (!u) return renderLogin();
+  renderApp(u);
+}
+
+function renderLogin() {
+  document.getElementById('root').innerHTML = `
+    <div class="login-screen">
+      <div class="login-card">
+        <div class="login-brand">
+          <div class="login-logo">${I.plane}</div>
+          <div>
+            <div class="login-title">مطارات الرياض</div>
+            <div class="login-subtitle">Riyadh Airports Company</div>
+            <span class="login-version">v3.1 — Permission Refinement</span>
+          </div>
+        </div>
+        <form id="loginForm">
+          <div id="loginError"></div>
+          <div class="field">
+            <label>اسم المستخدم</label>
+            <input name="username" autocomplete="username" required />
+          </div>
+          <div class="field">
+            <label>كلمة المرور</label>
+            <input name="password" type="password" autocomplete="current-password" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">تسجيل الدخول</button>
+        </form>
+        <div class="login-hint">
+          <strong>بيانات الاختبار:</strong>
+          <div class="creds">
+            <span>admin / admin123</span><span>operator1 / op123</span>
+            <span>customs / cust123</span><span>security / sec123</span>
+            <span>gaca / gaca123</span><span>user1 / user123</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const r = login(fd.get('username').trim(), fd.get('password'));
+    if (!r.ok) {
+      document.getElementById('loginError').innerHTML = `<div class="login-error">${escapeHtml(r.error)}</div>`;
+    } else { render(); }
+  });
+}
+
+function renderApp(user) {
+  const root = document.getElementById('root');
+  root.innerHTML = `
+    <div class="app-shell">
+      <div class="topbar">
+        <div class="topbar-brand">
+          <div class="topbar-logo">${I.plane}</div>
+          <div>
+            <div class="topbar-title">مطارات الرياض — نظام تصاريح المطار</div>
+            <div class="topbar-subtitle">Riyadh Airports • v3.1</div>
+          </div>
+        </div>
+        <div class="topbar-user">
+          <div class="user-info">
+            <div class="user-name">${escapeHtml(user.fullName)}</div>
+            <div class="user-role">${escapeHtml(ROLE_LABELS[user.role])}</div>
+          </div>
+          <div class="user-avatar">${escapeHtml(user.fullName[0])}</div>
+          <button class="btn btn-ghost btn-sm" onclick="logout()" style="color:#fff">خروج</button>
+        </div>
+      </div>
+      <div class="layout">
+        <aside class="sidebar">${renderSidebar(user)}</aside>
+        <main class="main">${renderMain(user)}</main>
+      </div>
+    </div>`;
+}
+
+function renderSidebar(user) {
+  const v = state.view;
+  const link = (k, label, icon, badge) => {
+    const b = (badge != null && badge !== 0) ? `<span class="badge">${badge}</span>` : '';
+    return `<div class="sidebar-link ${v === k ? 'active' : ''}" onclick="setView('${k}')">
+      <span class="icon">${icon}</span><span>${label}</span>${b}
+    </div>`;
+  };
+
+  let html = '<div class="sidebar-section">القائمة الرئيسية</div>';
+  if (user.role === 'user') {
+    html += link('home', 'طلباتي', '📋', myPermits(user).length);
+    html += link('new-permit', 'طلب جديد', '➕');
+  } else if (user.role === 'operator') {
+    const wp = state.permits.filter(p => p.status === 'pending_payment').length;
+    html += link('home', 'لوحة العمليات', '📊');
+    html += link('pending-payment', 'بانتظار الدفع', '💳', wp);
+    html += link('active-permits', 'التصاريح السارية', '✅');
+    html += link('new-permit', 'طلب جديد', '➕');
+    html += link('whatsapp', 'سجل واتساب', '💬', state.whatsappLog.length);
+  } else if (user.role === 'customs' || user.role === 'security' || user.role === 'gaca') {
+    const dept = getDeptForRole(user.role);
+    html += link('home', 'لوحة ' + dept.label, '🏛️');
+    html += link('dept-pending', 'طلبات بانتظار مراجعتي', '⏳', permitsInMyStage(user).length);
+    html += link('dept-approved', 'المعتمدة من قِبَلي', '✅', myApprovedPermits(user).length);
+    html += link('dept-returned', 'المُعادة من قِبَلي', '↩️', myReturnedPermits(user).length);
+  } else if (user.role === 'admin') {
+    html += link('home', 'لوحة المعلومات', '📊');
+    html += link('all-permits', 'جميع الطلبات', '📋', state.permits.length);
+    html += link('users', 'إدارة المستخدمين', '👥', state.users.length);
+    html += link('whatsapp', 'سجل واتساب', '💬', state.whatsappLog.length);
+  }
+  return html;
+}
+
+function setView(v) { state.view = v; render(); }
+
+function renderMain(user) {
+  const v = state.view;
+  if (user.role === 'user') {
+    if (v === 'new-permit') return renderNewPermitForm(user);
+    return renderUserHome(user);
+  }
+  if (user.role === 'operator') {
+    if (v === 'new-permit') return renderNewPermitForm(user);
+    if (v === 'pending-payment') return renderPaymentQueue(user);
+    if (v === 'active-permits') return renderActivePermits(user);
+    if (v === 'whatsapp') return renderWhatsAppLog();
+    return renderOperatorHome(user);
+  }
+  if (user.role === 'customs' || user.role === 'security' || user.role === 'gaca') {
+    if (v === 'dept-pending') return renderDeptPending(user);
+    if (v === 'dept-approved') return renderDeptApproved(user);
+    if (v === 'dept-returned') return renderDeptReturned(user);
+    return renderDeptHome(user);
+  }
+  if (user.role === 'admin') {
+    if (v === 'all-permits') return renderAllPermits();
+    if (v === 'users') return renderUsersAdmin();
+    if (v === 'whatsapp') return renderWhatsAppLog();
+    return renderAdminHome();
+  }
+  return '<div class="empty">لا يوجد محتوى</div>';
+}
+
+// ============== USER VIEWS ==============
+function myPermits(user) {
+  return state.permits.filter(p => p.createdBy === user.id);
+}
+
+function renderUserHome(user) {
+  const list = myPermits(user);
+  const counts = countByStatus(list);
+  const stats = `
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--warning)">
+        <div class="stat-label">قيد المراجعة</div>
+        <div class="stat-value">${counts.pending}</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--purple)">
+        <div class="stat-label">بانتظار الدفع</div>
+        <div class="stat-value">${counts.payment}</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--success)">
+        <div class="stat-label">تصاريح سارية</div>
+        <div class="stat-value">${counts.active}</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--danger)">
+        <div class="stat-label">معاد للتصحيح</div>
+        <div class="stat-value">${counts.returned}</div>
+      </div>
+    </div>`;
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">طلباتي</div>
+        <div class="page-subtitle">تتبع حالة طلبات التصاريح الخاصة بك</div>
+      </div>
+      <button class="btn btn-primary" onclick="setView('new-permit')">➕ طلب تصريح جديد</button>
+    </div>
+    ${stats}
+    <div class="panel">
+      <div class="panel-header">قائمة الطلبات (${list.length})</div>
+      ${renderPermitsTable(list, { context: 'user' })}
+    </div>`;
+}
+
+function countByStatus(list) {
+  const c = { pending: 0, payment: 0, active: 0, returned: 0, rejected: 0, cancelled: 0 };
+  for (const p of list) {
+    if (['pending_approval_1','pending_approval_2','pending_approval_3'].includes(p.status)) c.pending++;
+    else if (p.status === 'pending_payment') c.payment++;
+    else if (p.status === 'active') c.active++;
+    else if (p.status === 'returned') c.returned++;
+    else if (p.status === 'rejected') c.rejected++;
+    else if (p.status === 'cancelled') c.cancelled++;
+  }
+  return c;
+}
+
+function renderNewPermitForm(user) {
+  const isUser = user.role === 'user';
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">طلب تصريح جديد</div>
+        <div class="page-subtitle">املأ البيانات أدناه — سيتم توجيهه عبر مراحل الموافقة الثلاث</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">بيانات الطلب</div>
+      <form id="permitForm" onsubmit="submitNewPermit(event); return false;" style="padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="field"><label>اسم مقدم الطلب</label><input name="applicantName" value="${escapeHtml(isUser ? user.fullName : '')}" required /></div>
+        <div class="field"><label>رقم الهوية / الإقامة</label><input name="applicantId" required /></div>
+        <div class="field"><label>رقم الجوال</label><input name="applicantPhone" placeholder="+9665..." required /></div>
+        <div class="field"><label>الشركة / الجهة</label><input name="company" required /></div>
+        <div class="field"><label>نوع المادة</label><input name="materialType" required /></div>
+        <div class="field"><label>الكمية</label><input name="quantity" required /></div>
+        <div class="field" style="grid-column:span 2"><label>الوصف التفصيلي للمواد</label><textarea name="materialDescription" required></textarea></div>
+        <div class="field"><label>الاتجاه</label>
+          <select name="direction" required>
+            <option value="entry">دخول</option>
+            <option value="exit">خروج</option>
+          </select>
+        </div>
+        <div class="field"><label>المطار</label>
+          <select name="airport" required>
+            <option>مطار الملك خالد الدولي</option>
+            <option>مطار الملك عبدالعزيز الدولي</option>
+            <option>مطار الملك فهد الدولي</option>
+            <option>مطار الأمير محمد بن عبدالعزيز</option>
+          </select>
+        </div>
+        <div class="field"><label>مدة التصريح (أيام)</label><input type="number" name="duration" value="7" min="1" max="365" required /></div>
+        <div class="field"></div>
+        <div style="grid-column:span 2;display:flex;gap:8px;justify-content:flex-end;margin-top:6px">
+          <button type="button" class="btn btn-outline" onclick="setView('home')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">تقديم الطلب</button>
+        </div>
+      </form>
+    </div>`;
+}
+
+function submitNewPermit(e) {
+  e.preventDefault();
+  const fd = new FormData(e.target);
+  const obj = {};
+  fd.forEach((v, k) => obj[k] = v);
+  try {
+    const p = createPermit(obj, currentUser());
+    toast('success', 'تم تقديم الطلب: ' + p.id);
+    setView('home');
+  } catch (err) {
+    console.error(err);
+    toast('error', 'حدث خطأ أثناء التقديم');
+  }
+}
+
+// ============== DEPARTMENT VIEWS ==============
+function renderDeptHome(user) {
+  const dept = getDeptForRole(user.role);
+  const pending = permitsInMyStage(user);
+  const approved = myApprovedPermits(user);
+  const returned = myReturnedPermits(user);
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">لوحة ${dept.label}</div>
+        <div class="page-subtitle">المرحلة ${dept.stage} من مسار الموافقات الثلاثي</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--warning)">
+        <div class="stat-label">بانتظار مراجعتي الآن</div>
+        <div class="stat-value">${pending.length}</div>
+        <div class="stat-meta">طلبات في المرحلة ${dept.stage}</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--success)">
+        <div class="stat-label">المعتمدة من قِبَلي</div>
+        <div class="stat-value">${approved.length}</div>
+        <div class="stat-meta">سجل تاريخي كامل</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--warning)">
+        <div class="stat-label">المُعادة من قِبَلي</div>
+        <div class="stat-value">${returned.length}</div>
+        <div class="stat-meta">للتصحيح</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="setView('dept-pending')">⏳ بانتظار مراجعتي <span class="badge">${pending.length}</span></div>
+      <div class="tab" onclick="setView('dept-approved')">✅ المعتمدة من قِبَلي <span class="badge">${approved.length}</span></div>
+      <div class="tab" onclick="setView('dept-returned')">↩️ المُعادة من قِبَلي <span class="badge">${returned.length}</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">طلبات بانتظار قراري — ${dept.label}</div>
+      ${renderPermitsTable(pending, { context: 'dept-pending' })}
+    </div>`;
+}
+
+function renderDeptPending(user) {
+  const dept = getDeptForRole(user.role);
+  const list = permitsInMyStage(user);
+  const approvedCount = myApprovedPermits(user).length;
+  const returnedCount = myReturnedPermits(user).length;
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">طلبات بانتظار مراجعتي</div>
+        <div class="page-subtitle">${dept.label} — المرحلة ${dept.stage}</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active">⏳ بانتظار مراجعتي <span class="badge">${list.length}</span></div>
+      <div class="tab" onclick="setView('dept-approved')">✅ المعتمدة من قِبَلي <span class="badge">${approvedCount}</span></div>
+      <div class="tab" onclick="setView('dept-returned')">↩️ المُعادة من قِبَلي <span class="badge">${returnedCount}</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">القائمة الحالية</div>
+      ${renderPermitsTable(list, { context: 'dept-pending' })}
+    </div>`;
+}
+
+function renderDeptApproved(user) {
+  const dept = getDeptForRole(user.role);
+  const list = myApprovedPermits(user);
+  const pendingCount = permitsInMyStage(user).length;
+  const returnedCount = myReturnedPermits(user).length;
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">المعتمدة من قِبَلي</div>
+        <div class="page-subtitle">سجل كامل لجميع الطلبات التي وافقت عليها — ${dept.label}</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab" onclick="setView('dept-pending')">⏳ بانتظار مراجعتي <span class="badge">${pendingCount}</span></div>
+      <div class="tab active">✅ المعتمدة من قِبَلي <span class="badge">${list.length}</span></div>
+      <div class="tab" onclick="setView('dept-returned')">↩️ المُعادة من قِبَلي <span class="badge">${returnedCount}</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">سجل الموافقات (${list.length})</div>
+      ${renderApprovalHistoryTable(list, user, 'approved')}
+    </div>`;
+}
+
+function renderDeptReturned(user) {
+  const dept = getDeptForRole(user.role);
+  const list = myReturnedPermits(user);
+  const pendingCount = permitsInMyStage(user).length;
+  const approvedCount = myApprovedPermits(user).length;
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">المُعادة من قِبَلي</div>
+        <div class="page-subtitle">جميع الطلبات التي أعدتُها للتصحيح — ${dept.label}</div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab" onclick="setView('dept-pending')">⏳ بانتظار مراجعتي <span class="badge">${pendingCount}</span></div>
+      <div class="tab" onclick="setView('dept-approved')">✅ المعتمدة من قِبَلي <span class="badge">${approvedCount}</span></div>
+      <div class="tab active">↩️ المُعادة من قِبَلي <span class="badge">${list.length}</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">سجل الإعادات (${list.length})</div>
+      ${renderApprovalHistoryTable(list, user, 'returned')}
+    </div>`;
+}
+
+function renderApprovalHistoryTable(list, user, action) {
+  if (!list.length) {
+    return `<div class="empty"><div class="empty-icon">${action === 'approved' ? '📭' : '📂'}</div>
+      <div class="empty-title">لا يوجد سجل بعد</div>
+      <div>الطلبات التي ${action === 'approved' ? 'توافق' : 'تعيد'} عليها ستظهر هنا</div></div>`;
+  }
+  // For each permit, find ALL approvals (not just last) by this user with the given action
+  const rows = [];
+  for (const p of list) {
+    for (const r of (p.rounds || [])) {
+      for (const a of (r.approvals || [])) {
+        if (a.by === user.id && a.action === action) {
+          rows.push({ permit: p, approval: a, roundNumber: r.roundNumber });
+        }
+      }
+    }
+  }
+  rows.sort((a, b) => b.approval.at - a.approval.at);
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>رقم الطلب</th>
+          <th>مقدم الطلب</th>
+          <th>المادة</th>
+          <th>تاريخ ${action === 'approved' ? 'الموافقة' : 'الإعادة'}</th>
+          <th>الجولة</th>
+          <th>الحالة الحالية للطلب</th>
+          ${action === 'returned' ? '<th>سبب الإعادة</th>' : ''}
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      ${rows.map(row => `
+        <tr>
+          <td><span class="permit-id">${escapeHtml(row.permit.id)}</span></td>
+          <td>${escapeHtml(row.permit.applicantName)}</td>
+          <td>${escapeHtml(row.permit.materialType)}</td>
+          <td class="small text-muted">${formatDateTime(row.approval.at)}</td>
+          <td><span class="pill pill-blue">جولة ${row.roundNumber}</span></td>
+          <td>${statusPill(row.permit)}</td>
+          ${action === 'returned' ? `<td class="small text-muted" style="max-width:240px">${escapeHtml(row.approval.comment || '-')}</td>` : ''}
+          <td class="actions"><button class="btn btn-outline btn-sm" onclick="showPermitDetails('${row.permit.id}')">عرض</button></td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ============== OPERATOR VIEWS ==============
+function renderOperatorHome(user) {
+  const wp = state.permits.filter(p => p.status === 'pending_payment');
+  const active = state.permits.filter(p => p.status === 'active');
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">لوحة العمليات</div>
+        <div class="page-subtitle">إدارة الدفع والتصاريح السارية</div>
+      </div>
+      <button class="btn btn-primary" onclick="setView('new-permit')">➕ طلب جديد</button>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--purple)">
+        <div class="stat-label">بانتظار تأكيد الدفع</div>
+        <div class="stat-value">${wp.length}</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--success)">
+        <div class="stat-label">تصاريح سارية</div>
+        <div class="stat-value">${active.length}</div>
+      </div>
+      <div class="stat-card" style="--accent:var(--info)">
+        <div class="stat-label">إجمالي التصاريح</div>
+        <div class="stat-value">${state.permits.length}</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">بانتظار تأكيد الدفع (${wp.length})</div>
+      ${renderPermitsTable(wp, { context: 'operator-payment' })}
+    </div>`;
+}
+
+function renderPaymentQueue() {
+  const list = state.permits.filter(p => p.status === 'pending_payment');
+  return `
+    <div class="page-header"><div>
+      <div class="page-title">بانتظار تأكيد الدفع</div>
+      <div class="page-subtitle">الطلبات التي اكتملت الموافقات الثلاث وتنتظر إتمام الدفع</div>
+    </div></div>
+    <div class="panel">
+      <div class="panel-header">القائمة (${list.length})</div>
+      ${renderPermitsTable(list, { context: 'operator-payment' })}
+    </div>`;
+}
+
+function renderActivePermits() {
+  const list = state.permits.filter(p => p.status === 'active' || (p.status === 'expired' && p.expiryDate));
+  return `
+    <div class="page-header"><div>
+      <div class="page-title">التصاريح السارية والمنتهية</div>
+    </div></div>
+    <div class="panel">
+      <div class="panel-header">القائمة (${list.length})</div>
+      ${renderPermitsTable(list, { context: 'operator-active' })}
+    </div>`;
+}
+
+// ============== ADMIN VIEWS ==============
+function renderAdminHome() {
+  const counts = countByStatus(state.permits);
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">لوحة المعلومات الإدارية</div>
+        <div class="page-subtitle">رؤية كاملة على دورة عمل التصاريح وصلاحيات الرفض/الإلغاء حصراً للمدير</div>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:var(--warning)"><div class="stat-label">قيد المراجعة</div><div class="stat-value">${counts.pending}</div></div>
+      <div class="stat-card" style="--accent:var(--purple)"><div class="stat-label">بانتظار الدفع</div><div class="stat-value">${counts.payment}</div></div>
+      <div class="stat-card" style="--accent:var(--success)"><div class="stat-label">سارية</div><div class="stat-value">${counts.active}</div></div>
+      <div class="stat-card" style="--accent:var(--warning)"><div class="stat-label">معاد للتصحيح</div><div class="stat-value">${counts.returned}</div></div>
+      <div class="stat-card" style="--accent:var(--danger)"><div class="stat-label">مرفوضة</div><div class="stat-value">${counts.rejected}</div></div>
+      <div class="stat-card" style="--accent:var(--danger)"><div class="stat-label">ملغاة إدارياً</div><div class="stat-value">${counts.cancelled}</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">آخر الطلبات</div>
+      ${renderPermitsTable(state.permits.slice(0, 12), { context: 'admin' })}
+    </div>`;
+}
+
+function renderAllPermits() {
+  return `
+    <div class="page-header"><div>
+      <div class="page-title">جميع الطلبات</div>
+      <div class="page-subtitle">العرض الكامل — مع صلاحية الرفض والإلغاء الإداري</div>
+    </div></div>
+    <div class="filter-row">
+      <input id="searchInput" placeholder="بحث برقم الطلب أو الاسم..." oninput="state.filter.search=this.value;rerenderAll()" value="${escapeHtml(state.filter.search)}" />
+      <select onchange="state.filter.status=this.value;rerenderAll()">
+        <option value="">كل الحالات</option>
+        ${Object.entries(STATUS_LABELS).filter(([k]) => k !== 'expiring').map(([k,v]) =>
+          `<option value="${k}" ${state.filter.status===k?'selected':''}>${v.txt}</option>`).join('')}
+      </select>
+    </div>
+    <div class="panel" id="adminTable">
+      ${renderAllPermitsTable()}
+    </div>`;
+}
+
+function rerenderAll() {
+  const el = document.getElementById('adminTable');
+  if (el) el.innerHTML = renderAllPermitsTable();
+}
+
+function renderAllPermitsTable() {
+  let list = state.permits;
+  if (state.filter.search) {
+    const q = state.filter.search.toLowerCase();
+    list = list.filter(p => (p.id+' '+p.applicantName+' '+(p.company||'')).toLowerCase().includes(q));
+  }
+  if (state.filter.status) list = list.filter(p => p.status === state.filter.status);
+  return `<div class="panel-header">${list.length} طلب</div>${renderPermitsTable(list, { context: 'admin' })}`;
+}
+
+function renderUsersAdmin() {
+  return `
+    <div class="page-header">
+      <div>
+        <div class="page-title">إدارة المستخدمين</div>
+        <div class="page-subtitle">إنشاء وتعطيل حسابات المستخدمين</div>
+      </div>
+      <button class="btn btn-primary" onclick="showCreateUserModal()">➕ مستخدم جديد</button>
+    </div>
+    <div class="panel">
+      <div class="panel-header">قائمة المستخدمين (${state.users.length})</div>
+      <table>
+        <thead><tr>
+          <th>اسم المستخدم</th><th>الاسم الكامل</th><th>الصلاحية</th><th>الحالة</th><th>تاريخ الإنشاء</th><th></th>
+        </tr></thead>
+        <tbody>
+        ${state.users.map(u => `
+          <tr>
+            <td><code>${escapeHtml(u.username)}</code></td>
+            <td>${escapeHtml(u.fullName)}</td>
+            <td><span class="pill pill-blue">${escapeHtml(ROLE_LABELS[u.role] || u.role)}</span></td>
+            <td>${u.active ? '<span class="pill pill-green">نشط</span>' : '<span class="pill pill-gray">معطل</span>'}</td>
+            <td class="small text-muted">${formatDate(u.createdAt)}</td>
+            <td class="actions">
+              ${u.id !== 'u-admin'
+                ? `<button class="btn btn-outline btn-sm" onclick="toggleUserActive('${u.id}')">${u.active ? 'تعطيل' : 'تفعيل'}</button>`
+                : '<span class="small text-muted">المدير الرئيسي</span>'}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function showCreateUserModal() {
+  showModal(`
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">إنشاء مستخدم جديد</div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="newUserForm">
+          <div class="field"><label>اسم المستخدم</label><input name="username" required /></div>
+          <div class="field"><label>كلمة المرور</label><input name="password" required /></div>
+          <div class="field"><label>الاسم الكامل</label><input name="fullName" required /></div>
+          <div class="field"><label>الصلاحية</label>
+            <select name="role" required>
+              <option value="user">مستخدم</option>
+              <option value="operator">موظف تصاريح</option>
+              <option value="customs">مندوب الجمارك</option>
+              <option value="security">مندوب الأمن العام</option>
+              <option value="gaca">مندوب هيئة الطيران المدني</option>
+              <option value="admin">مدير النظام</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitCreateUser()">إنشاء</button>
+      </div>
+    </div>`);
+}
+function submitCreateUser() {
+  const f = document.getElementById('newUserForm');
+  const fd = new FormData(f);
+  const obj = {}; fd.forEach((v,k) => obj[k] = v);
+  if (createUser(obj)) closeModal();
+}
+
+function renderWhatsAppLog() {
+  return `
+    <div class="page-header"><div>
+      <div class="page-title">سجل واتساب</div>
+      <div class="page-subtitle">جميع الرسائل المُرسَلة تلقائياً إلى ${PHONE}</div>
+    </div></div>
+    <div class="panel">
+      <div class="panel-header">${state.whatsappLog.length} رسالة</div>
+      <div style="padding:18px;max-height:70vh;overflow-y:auto">
+      ${state.whatsappLog.length === 0
+        ? '<div class="empty"><div class="empty-icon">💬</div><div class="empty-title">لا توجد رسائل بعد</div></div>'
+        : state.whatsappLog.map(m => `
+          <div class="wa-message">
+            <div style="white-space:pre-wrap">${escapeHtml(m.message)}</div>
+            <div class="wa-meta">${escapeHtml(m.permitId)} • ${escapeHtml(m.type)} • ${formatDateTime(m.at)}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// ============== TABLES ==============
+function renderPermitsTable(list, opts) {
+  if (!list || !list.length) {
+    return `<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">لا توجد طلبات</div></div>`;
+  }
+  const showApplicant = opts.context !== 'user';
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>رقم الطلب</th>
+          ${showApplicant ? '<th>مقدم الطلب</th>' : ''}
+          <th>المادة</th>
+          <th>الاتجاه</th>
+          <th>الحالة</th>
+          <th>التقدّم</th>
+          <th>التاريخ</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      ${list.map(p => `
+        <tr>
+          <td><span class="permit-id">${escapeHtml(p.id)}</span></td>
+          ${showApplicant ? `<td>${escapeHtml(p.applicantName)}</td>` : ''}
+          <td>${escapeHtml(p.materialType)}</td>
+          <td><span class="pill ${p.direction==='entry'?'pill-blue':'pill-purple'}">${p.direction==='entry'?'دخول':'خروج'}</span></td>
+          <td>${statusPill(p)}</td>
+          <td>${stageProgress(p)}</td>
+          <td class="small text-muted">${formatDate(p.createdAt)}</td>
+          <td class="actions">${rowActions(p, opts.context)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function stageProgress(p) {
+  const reached = (n) => {
+    if (p.status === 'pending_approval_1') return n < 1;
+    if (p.status === 'pending_approval_2') return n < 2;
+    if (p.status === 'pending_approval_3') return n < 3;
+    if (['pending_payment','active','expired','expiring'].includes(p.status)) return n < 3;
+    return false;
+  };
+  const isCurrent = (n) => {
+    if (p.status === 'pending_approval_1' && n === 1) return true;
+    if (p.status === 'pending_approval_2' && n === 2) return true;
+    if (p.status === 'pending_approval_3' && n === 3) return true;
+    return false;
+  };
+  return `<div class="stage-progress" title="مراحل الموافقة">
+    ${[1,2,3].map(n => `<div class="stage-pip ${reached(n)?'done':''} ${isCurrent(n)?'current':''}"></div>`).join('')}
+  </div>`;
+}
+
+function rowActions(p, ctx) {
+  const u = currentUser();
+  const view = `<button class="btn btn-outline btn-sm" onclick="showPermitDetails('${p.id}')">عرض</button>`;
+  const acts = [];
+  if (canApprove(u, p)) {
+    acts.push(`<button class="btn btn-success btn-sm" onclick="showApproveModal('${p.id}')">✅ موافقة</button>`);
+    acts.push(`<button class="btn btn-warning btn-sm" onclick="showReturnModal('${p.id}')">↩️ إعادة</button>`);
+  }
+  if (canConfirmPayment(u, p)) acts.push(`<button class="btn btn-success btn-sm" onclick="showPaymentModal('${p.id}')">💳 تأكيد الدفع</button>`);
+  if (canResubmit(u, p)) acts.push(`<button class="btn btn-primary btn-sm" onclick="showResubmitModal('${p.id}')">🔄 تعديل وإعادة</button>`);
+  if (u.role === 'admin') {
+    if (canReject(u, p)) acts.push(`<button class="btn btn-danger btn-sm" onclick="showRejectModal('${p.id}')">✖️ رفض</button>`);
+    if (canCancel(u, p)) acts.push(`<button class="btn btn-outline btn-sm" onclick="showCancelModal('${p.id}')">🚫 إلغاء</button>`);
+  }
+  return view + acts.join('');
+}
+
+// ============== PERMIT DETAILS MODAL ==============
+function showPermitDetails(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return toast('error', 'الطلب غير موجود');
+  const u = currentUser();
+  // ★ v3.1+: Department reps (customs/security/gaca) see ONLY their own actions in the chain.
+  // Admin and operator see the full chain. User (applicant) sees stage progression without internal names.
+  const isDeptRole = ['customs','security','gaca'].includes(u.role);
+  const showFinalDecisions = !isDeptRole; // top-level reject/cancel/return summary boxes hidden from depts
+  const html = `
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">تفاصيل الطلب <span class="permit-id">${escapeHtml(p.id)}</span></div>
+          <div class="small text-muted" style="margin-top:4px">${statusPill(p)} <span style="margin-right:6px">قُدِّم في ${formatDateTime(p.createdAt)}</span></div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="section-title">بيانات مقدم الطلب</div>
+        <div class="kv-grid">
+          <div class="kv"><div class="kv-label">الاسم</div><div class="kv-value">${escapeHtml(p.applicantName)}</div></div>
+          <div class="kv"><div class="kv-label">الهوية</div><div class="kv-value">${escapeHtml(p.applicantId)}</div></div>
+          <div class="kv"><div class="kv-label">الجوال</div><div class="kv-value" style="direction:ltr">${escapeHtml(p.applicantPhone)}</div></div>
+          <div class="kv"><div class="kv-label">الشركة</div><div class="kv-value">${escapeHtml(p.company)}</div></div>
+        </div>
+        <div class="section-title">تفاصيل المواد والتصريح</div>
+        <div class="kv-grid">
+          <div class="kv"><div class="kv-label">نوع المادة</div><div class="kv-value">${escapeHtml(p.materialType)}</div></div>
+          <div class="kv"><div class="kv-label">الكمية</div><div class="kv-value">${escapeHtml(p.quantity)}</div></div>
+          <div class="kv"><div class="kv-label">الاتجاه</div><div class="kv-value">${p.direction==='entry'?'دخول':'خروج'}</div></div>
+          <div class="kv"><div class="kv-label">المطار</div><div class="kv-value">${escapeHtml(p.airport)}</div></div>
+          <div class="kv"><div class="kv-label">المدة</div><div class="kv-value">${p.duration} يوم</div></div>
+          ${p.expiryDate ? `<div class="kv"><div class="kv-label">تنتهي في</div><div class="kv-value">${formatDate(p.expiryDate)}</div></div>` : ''}
+        </div>
+        <div class="kv" style="grid-column:span 2"><div class="kv-label">الوصف</div><div class="kv-value" style="font-weight:400">${escapeHtml(p.materialDescription)}</div></div>
+
+        ${p.status === 'returned' && p.lastReturnComment && showFinalDecisions ? `
+          <div class="section-title" style="border-color:var(--warning);color:var(--warning)">سبب الإعادة الأخيرة</div>
+          <div style="background:var(--warning-bg);padding:12px;border-radius:var(--radius-sm);font-size:13px">${escapeHtml(p.lastReturnComment)}</div>
+        ` : ''}
+
+        ${p.status === 'rejected' && showFinalDecisions ? `
+          <div class="section-title" style="border-color:var(--danger);color:var(--danger)">قرار الرفض</div>
+          <div style="background:var(--danger-bg);padding:12px;border-radius:var(--radius-sm);font-size:13px">
+            <strong>${escapeHtml(p.rejectedByName||'-')}:</strong> ${escapeHtml(p.rejectionReason||'-')}
+            <div class="small text-muted" style="margin-top:4px">${formatDateTime(p.rejectedAt)}</div>
+          </div>
+        ` : ''}
+
+        ${p.status === 'cancelled' && showFinalDecisions ? `
+          <div class="section-title" style="border-color:var(--danger);color:var(--danger)">الإلغاء الإداري</div>
+          <div style="background:var(--danger-bg);padding:12px;border-radius:var(--radius-sm);font-size:13px">
+            <strong>السبب:</strong> ${escapeHtml(p.cancelReason||'-')}
+            <div class="small text-muted" style="margin-top:4px">${formatDateTime(p.cancelledAt)}</div>
+          </div>
+        ` : ''}
+
+        <div class="section-title">${isDeptRole ? 'سجل قراراتي على هذا الطلب' : `سجل جولات الموافقة (${(p.rounds||[]).length})`}</div>
+        ${isDeptRole ? `<div class="text-muted small" style="margin-bottom:10px">يظهر هنا فقط ما قمت به أنت — قرارات الأقسام الأخرى لا تظهر حسب صلاحياتك.</div>` : ''}
+        ${(p.rounds||[]).map(r => renderRound(r, p, u)).join('')}
+
+        ${p.status === 'active' ? `
+          <div class="section-title">QR كود التصريح</div>
+          <div style="text-align:center;margin:14px 0"><div class="qr-container" id="qrcode-${p.id}"></div></div>
+          <div class="text-center"><button class="btn btn-gold" onclick="printPermit('${p.id}')">🖨️ طباعة التصريح</button></div>
+        ` : ''}
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">إغلاق</button>
+        ${rowActions(p, 'detail')}
+      </div>
+    </div>`;
+  showModal(html);
+  if (p.status === 'active') {
+    setTimeout(() => {
+      const el = document.getElementById('qrcode-' + p.id);
+      if (el && typeof QRCode !== 'undefined') {
+        try {
+          new QRCode(el, {
+            text: JSON.stringify({ id: p.id, name: p.applicantName, mat: p.materialType, dir: p.direction, exp: p.expiryDate }),
+            width: 160, height: 160, colorDark: '#0a2540', colorLight: '#ffffff'
+          });
+        } catch (e) { console.warn('QR err', e); }
+      }
+    }, 50);
+  }
+}
+
+function renderRound(round, permit, viewer) {
+  // ★ Permission-aware filtering:
+  //   - Department reps (customs/security/gaca): see ONLY actions performed by their own role
+  //   - Admin: sees everything (full chain, full identity)
+  //   - Operator: sees everything (internal staff)
+  //   - User (applicant): sees stage progression but no internal identifying details
+  const isDeptRole = ['customs','security','gaca'].includes(viewer.role);
+  const seeInternalNames = ['admin','customs','security','gaca','operator'].includes(viewer.role);
+
+  const allApprovals = round.approvals || [];
+  const visibleApprovals = isDeptRole
+    ? allApprovals.filter(a => a.role === viewer.role)
+    : allApprovals;
+  const hiddenCount = allApprovals.length - visibleApprovals.length;
+
+  // If a department viewer has nothing visible AND nothing hidden in this round,
+  // it just means the round is still empty — show normal empty notice.
+  // If they have nothing visible BUT actions exist from other depts, skip the round entirely
+  // (cleaner than showing repetitive "hidden" notices for every round they didn't touch).
+  if (isDeptRole && visibleApprovals.length === 0 && hiddenCount > 0) {
+    return '';
+  }
+
+  const statusMap = {
+    in_progress: { txt: 'قيد المعالجة', cls: 'pill-yellow' },
+    completed: { txt: 'مكتملة', cls: 'pill-green' },
+    returned: { txt: 'معادة للتصحيح', cls: 'pill-orange' },
+    rejected: { txt: 'مرفوضة', cls: 'pill-red' },
+    cancelled: { txt: 'ملغاة', cls: 'pill-red' }
+  };
+  const sInfo = statusMap[round.status] || statusMap.in_progress;
+  return `
+    <div class="round-card">
+      <div class="round-header">
+        <div>
+          <div class="round-title">جولة رقم ${round.roundNumber} ${round.resubmittedFromRound ? `<span class="small text-muted">(إعادة تقديم من جولة ${round.resubmittedFromRound})</span>` : ''}</div>
+          <div class="round-meta">بدأت: ${formatDateTime(round.startedAt)} ${round.endedAt ? '• انتهت: ' + formatDateTime(round.endedAt) : ''}</div>
+        </div>
+        <span class="pill ${sInfo.cls}">${sInfo.txt}</span>
+      </div>
+      <div class="round-body">
+        ${visibleApprovals.length === 0 ? '<div class="text-muted small">لم تُسجَّل إجراءات في هذه الجولة بعد</div>' : ''}
+        ${visibleApprovals.map(a => {
+          const map = {
+            approved: { icon: '✓', bg: 'var(--success-bg)', color: 'var(--success)', label: 'موافقة' },
+            returned: { icon: '↩', bg: 'var(--warning-bg)', color: 'var(--warning)', label: 'إعادة للتصحيح' },
+            rejected: { icon: '✕', bg: 'var(--danger-bg)', color: 'var(--danger)', label: 'رفض' },
+            cancelled: { icon: '🚫', bg: 'var(--danger-bg)', color: 'var(--danger)', label: 'إلغاء إداري' }
+          };
+          const m = map[a.action] || map.approved;
+          return `
+            <div class="approval-step">
+              <div class="approval-icon" style="background:${m.bg};color:${m.color}">${m.icon}</div>
+              <div class="approval-info">
+                <div class="approval-action" style="color:${m.color}">${m.label} — ${escapeHtml(a.stageName)}</div>
+                <div class="approval-meta">
+                  ${seeInternalNames ? `${escapeHtml(a.byName)} <span class="text-muted">(${ROLE_LABELS[a.role]||a.role})</span> • ` : ''}
+                  ${formatDateTime(a.at)}
+                </div>
+                ${a.comment ? `<div class="approval-comment">${escapeHtml(a.comment)}</div>` : ''}
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+// ============== ACTION MODALS ==============
+function showApproveModal(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return toast('error', 'الطلب غير موجود');
+  showModal(`
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">تأكيد الموافقة</div><button class="modal-close" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <div style="background:var(--success-bg);color:var(--success);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px">
+          ✅ ستتم الموافقة على الطلب <strong>${escapeHtml(p.id)}</strong> ونقله للمرحلة التالية
+        </div>
+        <div class="field"><label>تعليق (اختياري)</label><textarea id="approveComment" placeholder="أي ملاحظات على الطلب..."></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-success" onclick="approvePermit('${p.id}', document.getElementById('approveComment').value)">✅ موافقة</button>
+      </div>
+    </div>`);
+}
+
+function showReturnModal(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return toast('error', 'الطلب غير موجود');
+  showModal(`
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">إعادة الطلب للتصحيح</div><button class="modal-close" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <div style="background:var(--warning-bg);color:var(--warning);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px">
+          ↩️ سيُعاد الطلب <strong>${escapeHtml(p.id)}</strong> للمستخدم لتعديل البيانات. الجولة الحالية تُؤرشف.
+        </div>
+        <div class="field">
+          <label>سبب الإعادة (إجباري — 5 أحرف على الأقل)</label>
+          <textarea id="returnComment" placeholder="مثال: الوصف غير دقيق، يرجى التوضيح..." required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-warning" onclick="returnPermit('${p.id}', document.getElementById('returnComment').value)">↩️ إعادة للتصحيح</button>
+      </div>
+    </div>`);
+}
+
+function showRejectModal(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return toast('error', 'الطلب غير موجود');
+  showModal(`
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">رفض الطلب نهائياً</div><button class="modal-close" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <div style="background:var(--danger-bg);color:var(--danger);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px">
+          ⚠️ <strong>إجراء نهائي:</strong> سيتم رفض الطلب ${escapeHtml(p.id)} ولن يمكن استئنافه. صلاحية حصرية للمدير في v3.1.
+        </div>
+        <div class="field"><label>سبب الرفض (إجباري)</label><textarea id="rejectComment" placeholder="..." required></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-danger" onclick="rejectPermit('${p.id}', document.getElementById('rejectComment').value)">✖️ رفض نهائي</button>
+      </div>
+    </div>`);
+}
+
+function showCancelModal(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return toast('error', 'الطلب غير موجود');
+  showModal(`
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">إلغاء إداري</div><button class="modal-close" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <div style="background:var(--danger-bg);color:var(--danger);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px">
+          🚫 سيتم إلغاء الطلب ${escapeHtml(p.id)} إدارياً. السجل يبقى محفوظاً لكن لا يمكن إعادة التقديم.
+        </div>
+        <div class="field"><label>سبب الإلغاء (إجباري)</label><textarea id="cancelReason" required></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">تراجع</button>
+        <button class="btn btn-danger" onclick="cancelPermit('${p.id}', document.getElementById('cancelReason').value)">🚫 تأكيد الإلغاء</button>
+      </div>
+    </div>`);
+}
+
+function showPaymentModal(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return toast('error', 'الطلب غير موجود');
+  showModal(`
+    <div class="modal">
+      <div class="modal-header"><div class="modal-title">تأكيد إتمام الدفع</div><button class="modal-close" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        <div style="background:var(--purple-bg);color:var(--purple);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px">
+          💳 تأكيد دفع 350 ر.س لطلب ${escapeHtml(p.id)} — سيُصدر التصريح ويُرسل QR عبر واتساب.
+        </div>
+        <div class="kv-grid">
+          <div class="kv"><div class="kv-label">المبلغ</div><div class="kv-value">350 ر.س</div></div>
+          <div class="kv"><div class="kv-label">المدة</div><div class="kv-value">${p.duration} يوم</div></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-success" onclick="confirmPayment('${p.id}')">💳 تأكيد الدفع وإصدار التصريح</button>
+      </div>
+    </div>`);
+}
+
+function showResubmitModal(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return toast('error', 'الطلب غير موجود');
+  showModal(`
+    <div class="modal modal-lg">
+      <div class="modal-header"><div class="modal-title">تعديل وإعادة تقديم — ${escapeHtml(p.id)}</div><button class="modal-close" onclick="closeModal()">×</button></div>
+      <div class="modal-body">
+        ${p.lastReturnComment ? `<div style="background:var(--warning-bg);color:var(--warning);padding:12px;border-radius:var(--radius-sm);margin-bottom:14px">
+          <strong>سبب الإعادة:</strong> ${escapeHtml(p.lastReturnComment)}
+        </div>` : ''}
+        <form id="resubmitForm" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="field"><label>نوع المادة</label><input name="materialType" value="${escapeHtml(p.materialType)}" required /></div>
+          <div class="field"><label>الكمية</label><input name="quantity" value="${escapeHtml(p.quantity)}" required /></div>
+          <div class="field" style="grid-column:span 2"><label>الوصف</label><textarea name="materialDescription" required>${escapeHtml(p.materialDescription)}</textarea></div>
+          <div class="field"><label>المدة</label><input type="number" name="duration" value="${p.duration}" min="1" max="365" required /></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitResubmit('${p.id}')">🔄 تعديل وإعادة تقديم</button>
+      </div>
+    </div>`);
+}
+function submitResubmit(permitId) {
+  const f = document.getElementById('resubmitForm');
+  const fd = new FormData(f);
+  const obj = {}; fd.forEach((v,k) => obj[k] = v);
+  obj.duration = parseInt(obj.duration, 10) || 7;
+  resubmitPermit(permitId, obj);
+}
+
+// ============== PRINT ==============
+function printPermit(permitId) {
+  const p = state.permits.find(x => x.id === permitId);
+  if (!p) return;
+  let printArea = document.getElementById('print-area');
+  if (!printArea) {
+    printArea = document.createElement('div');
+    printArea.id = 'print-area';
+    printArea.style.display = 'none';
+    document.body.appendChild(printArea);
+  }
+  printArea.innerHTML = `
+    <div class="print-permit">
+      <div class="print-header">
+        <div>
+          <div style="font-size:22px;font-weight:800;color:var(--navy)">مطارات الرياض</div>
+          <div style="color:var(--gold);font-size:13px;font-weight:600">Riyadh Airports Company</div>
+        </div>
+        <div style="text-align:left">
+          <div style="font-size:18px;font-weight:700;color:var(--navy)">تصريح دخول مواد</div>
+          <div class="permit-id" style="font-size:14px">${escapeHtml(p.id)}</div>
+        </div>
+      </div>
+      <div class="kv-grid">
+        <div class="kv"><div class="kv-label">الاسم</div><div class="kv-value">${escapeHtml(p.applicantName)}</div></div>
+        <div class="kv"><div class="kv-label">الشركة</div><div class="kv-value">${escapeHtml(p.company)}</div></div>
+        <div class="kv"><div class="kv-label">المادة</div><div class="kv-value">${escapeHtml(p.materialType)}</div></div>
+        <div class="kv"><div class="kv-label">الاتجاه</div><div class="kv-value">${p.direction==='entry'?'دخول':'خروج'}</div></div>
+        <div class="kv"><div class="kv-label">المطار</div><div class="kv-value">${escapeHtml(p.airport)}</div></div>
+        <div class="kv"><div class="kv-label">صالح حتى</div><div class="kv-value">${formatDate(p.expiryDate)}</div></div>
+      </div>
+      <div id="print-qr" style="text-align:center;margin:20px 0"></div>
+      <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:14px">
+        تصريح صادر إلكترونياً من نظام تصاريح مطارات الرياض — v3.1
+      </div>
+    </div>`;
+  printArea.style.display = 'block';
+  setTimeout(() => {
+    if (typeof QRCode !== 'undefined') {
+      try {
+        new QRCode(document.getElementById('print-qr'), {
+          text: JSON.stringify({ id: p.id, name: p.applicantName, exp: p.expiryDate }),
+          width: 140, height: 140, colorDark: '#0a2540'
+        });
+      } catch(e){}
+    }
+    window.print();
+    printArea.style.display = 'none';
+  }, 200);
+}
+
+// ============== INIT ==============
+loadState();
+render();
+</script>
+</body>
+</html>
