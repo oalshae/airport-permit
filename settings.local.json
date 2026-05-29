@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:commons.wikimedia.org)",
+      "WebFetch(domain:www.saudiags.com)",
+      "WebFetch(domain:brandfetch.com)",
+      "WebFetch(domain:share.google)",
+      "WebFetch(domain:www.google.com)",
+      "Bash(node -e ' *)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "mcp__Claude_Preview__preview_start",
+      "PowerShell(Invoke-Item \"C:\\\\Users\\\\Othman Alshaya\\\\Desktop\\\\SGS Project\\\\cashier.html\"; \"Opened cashier.html in default browser\")"
+    ]
+  }
+}
